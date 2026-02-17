@@ -4,7 +4,16 @@ An AI-powered financial analysis workflow built on Claude Code. Drop in financia
 
 Every analysis generates a **formatted HTML report** with styled tables, color-coded flags, and properly aligned numbers — easy to read in a browser, share with colleagues, or print.
 
+## Works with
+
+| Tool | Instructions file | Status |
+|------|------------------|--------|
+| **Claude Code** | `CLAUDE.md` | Fully supported |
+| **OpenAI Codex** | `AGENTS.md` | Supported |
+
 ## Setup
+
+### Claude Code
 
 1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) if you haven't already
 2. Clone this repo:
@@ -16,6 +25,32 @@ Every analysis generates a **formatted HTML report** with styled tables, color-c
    cd team-financial-analyst
    claude
    ```
+
+### OpenAI Codex
+
+1. Install [Codex](https://github.com/openai/codex) if you haven't already
+2. Clone this repo:
+   ```bash
+   git clone https://github.com/paidinesh7/team-financial-analyst.git
+   ```
+3. Open the project folder in Codex:
+   ```bash
+   cd team-financial-analyst
+   codex
+   ```
+
+### Model recommendations
+
+For best results, use the most capable model available. Financial analysis requires strong reasoning, attention to detail, and the ability to connect patterns across large documents.
+
+| Tool | Recommended model | Why |
+|------|------------------|-----|
+| Claude Code | **Claude Opus** (`claude-opus-4-6`) | Best at nuanced analysis, catching subtle red flags, and connecting the dots across statements. Use `opus` for complex or high-stakes analysis. |
+| Claude Code | Claude Sonnet (`claude-sonnet-4-5`) | Good for routine analysis. Faster and cheaper. Fine for well-structured financials with clear data. |
+| OpenAI Codex | **o3** | Most capable reasoning model. Best for complex financial analysis. |
+| OpenAI Codex | o4-mini | Faster, works for straightforward analysis. |
+
+In Claude Code, you can switch models with `/model` in the conversation.
 
 ## How to use
 
@@ -94,7 +129,8 @@ The report includes:
 ## What's in this repo
 
 ```
-├── CLAUDE.md                       # Agent instructions (analysis framework + all modules)
+├── CLAUDE.md                       # Agent instructions for Claude Code
+├── AGENTS.md                       # Agent instructions for OpenAI Codex
 ├── Understanding_finance.pdf       # Reference: Merrill Lynch guide to financial reports
 ├── template/
 │   └── report-template.html        # HTML/CSS template for generated reports
