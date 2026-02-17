@@ -15,6 +15,52 @@ When someone drops financial statements into the `statements/` folder and asks y
 
 ---
 
+## File Handling
+
+The `statements/` folder can contain files in multiple formats. Handle each as follows:
+
+### Supported formats
+
+| Format | How to read |
+|--------|------------|
+| **PDF** (.pdf) | Read directly using the Read tool. Works natively. |
+| **CSV** (.csv) | Read directly using the Read tool. Plain text, works natively. |
+| **Images** (.png, .jpg, .jpeg) | Read directly using the Read tool. Claude Code is multimodal — it can read photos and screenshots of financial statements. |
+| **Excel** (.xlsx, .xls) | Binary format — cannot be read directly. See Excel handling below. |
+
+### Excel handling
+
+Excel files require conversion before analysis. Follow this sequence:
+
+1. **Try Python first.** Run this via Bash to check if the required library is available and read the file:
+   ```bash
+   python3 -c "import openpyxl; print('openpyxl available')" 2>/dev/null || python3 -c "import pandas; print('pandas available')" 2>/dev/null || echo "neither available"
+   ```
+
+2. **If openpyxl or pandas is available**, convert the Excel file to CSV(s) via Bash:
+   ```bash
+   python3 -c "
+   import pandas as pd
+   xlsx = pd.ExcelFile('statements/filename.xlsx')
+   for sheet in xlsx.sheet_names:
+       df = pd.read_excel(xlsx, sheet_name=sheet)
+       df.to_csv(f'statements/{sheet}.csv', index=False)
+       print(f'Converted sheet: {sheet}')
+   "
+   ```
+   Then read the generated CSV files normally.
+
+3. **If Python libraries are not available**, tell the user:
+   > "I found an Excel file (`filename.xlsx`) but I can't read Excel files directly. Could you save it as CSV? In Excel or Google Sheets: File → Save As → CSV. If there are multiple sheets, save each one as a separate CSV. Drop them back in the `statements/` folder and I'll pick them up."
+
+### When reading files
+
+- **Read all files in `statements/` before starting any analysis.** Don't start outputting until you've gone through everything.
+- If the folder contains files for multiple companies, identify which files belong to which company based on filenames and content.
+- If a file can't be read or is corrupted, tell the user which file failed and continue with the remaining files.
+
+---
+
 ## HTML Report Generation
 
 **You must generate an HTML report for every analysis.** This is not optional — it's the primary deliverable for the team.

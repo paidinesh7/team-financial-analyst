@@ -21,7 +21,14 @@ Every analysis generates a **formatted HTML report** with styled tables, color-c
 
 ### 1. Add your files
 
-Drop financial statements into the `statements/` folder — PDFs, spreadsheets, CSVs, images of financial statements, annual reports. Anything you'd normally read during an analysis.
+Drop financial statements into the `statements/` folder. Supported formats:
+
+| Format | Support |
+|--------|---------|
+| **PDF** (.pdf) | Works directly |
+| **CSV** (.csv) | Works directly |
+| **Images** (.png, .jpg) | Works directly — photos or screenshots of financial statements |
+| **Excel** (.xlsx, .xls) | The agent will try to convert automatically using Python. If Python isn't available, it'll ask you to save as CSV first (File → Save As → CSV in Excel or Google Sheets) |
 
 For company comparisons, add statements for multiple companies.
 
