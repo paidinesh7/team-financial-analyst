@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{COMPANY_NAME}} — Financial Analysis</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #2563eb;
+    --red-bg: #fef2f2;
+    --red-border: #fca5a5;
+    --red-text: #991b1b;
+    --green-bg: #f0fdf4;
+    --green-border: #86efac;
+    --green-text: #166534;
+    --yellow-bg: #fffbeb;
+    --yellow-border: #fcd34d;
+    --yellow-text: #92400e;
+    --table-header: #f8fafc;
+    --table-alt: #f9fafb;
+    --table-hover: #f1f5f9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  p { margin-bottom: 12px; }
+
+  /* ── Company metadata box ── */
+  .company-meta {
+    background: var(--table-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+
+  .company-meta p {
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+  }
+
+  .company-meta strong { color: var(--text); }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px 0;
+    font-size: 0.9rem;
+  }
+
+  thead th {
+    background: var(--table-header);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+
+  thead th.num {
+    text-align: right;
+  }
+
+  tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr:nth-child(even) {
+    background: var(--table-alt);
+  }
+
+  tbody tr:hover {
+    background: var(--table-hover);
+  }
+
+  /* Right-aligned numeric cells with tabular (monospace) figures */
+  td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.88rem;
+  }
+
+  /* Left-column label styling */
+  td.metric {
+    font-weight: 500;
+  }
+
+  /* Color classes for positive / negative / caution values */
+  td.positive, span.positive {
+    color: var(--green-text);
+    font-weight: 600;
+  }
+
+  td.negative, span.negative {
+    color: var(--red-text);
+    font-weight: 600;
+  }
+
+  td.caution, span.caution {
+    color: var(--yellow-text);
+    font-weight: 600;
+  }
+
+  /* ── Flag cards (red / green / yellow) ── */
+  .flag {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-left: 4px solid;
+  }
+
+  .flag-red {
+    background: var(--red-bg);
+    border-left-color: var(--red-border);
+  }
+
+  .flag-green {
+    background: var(--green-bg);
+    border-left-color: var(--green-border);
+  }
+
+  .flag-yellow {
+    background: var(--yellow-bg);
+    border-left-color: var(--yellow-border);
+  }
+
+  .flag strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+
+  .flag-red strong { color: var(--red-text); }
+  .flag-green strong { color: var(--green-text); }
+  .flag-yellow strong { color: var(--yellow-text); }
+
+  .flag p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  /* ── Verdict / highlight box ── */
+  .verdict {
+    background: #f0f4ff;
+    border: 1px solid #c7d7fe;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .verdict p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* ── Observation lists ── */
+  .observations {
+    margin: 12px 0 20px 0;
+  }
+
+  .observations li {
+    margin-bottom: 10px;
+    padding-left: 4px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .observations li strong {
+    color: var(--text);
+  }
+
+  /* ── Monospace math / calculation boxes ── */
+  .math-box {
+    background: var(--table-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  /* ── Scorecard / checklist ── */
+  .pass { color: var(--green-text); font-weight: 600; }
+  .fail { color: var(--red-text); font-weight: 600; }
+  .na   { color: var(--muted); font-style: italic; }
+
+  /* ── Comparison: winner highlight ── */
+  td.winner {
+    background: var(--green-bg);
+    font-weight: 600;
+  }
+
+  /* ── Section divider ── */
+  .divider {
+    border: none;
+    border-top: 2px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  /* ── Print styles ── */
+  @media print {
+    body { max-width: 100%; padding: 20px; }
+    .flag, .verdict { break-inside: avoid; }
+    table { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     TEMPLATE GUIDE — HOW TO USE THESE COMPONENTS
+     ============================================================
+
+     This file is a reference for the HTML report structure and
+     CSS classes. When generating a report, read this template,
+     use the same <style> block, and compose the body using the
+     components below.
+
+     STRUCTURE:
+     1. <h1> + .subtitle      → Company name + period + currency note
+     2. .company-meta          → Entity details, business, key people, auditor
+     3. <h2> sections          → One per major analysis area
+     4. <table>                → Financial data (use classes below)
+     5. .flag cards            → Red flags, green flags, yellow flags
+     6. .verdict               → Verdict / highlight box
+     7. .math-box              → Calculations / breakeven math
+     8. .footer                → Source attribution
+
+     TABLE CLASSES:
+       th.num / td.num        → Right-aligned numeric column
+       td.metric              → Bold left-column label
+       td.positive            → Green text for positive changes
+       td.negative            → Red text for negative changes
+       td.caution             → Amber text for items needing attention
+       td.winner              → Green background for comparison winner
+
+     FLAG CLASSES:
+       .flag.flag-red         → Critical risk / red flag
+       .flag.flag-yellow      → Caution / monitor
+       .flag.flag-green       → Strength / positive signal
+
+     CHECKLIST CLASSES:
+       .pass                  → Green "Pass" text
+       .fail                  → Red "Fail" text
+       .na                    → Grey italic "N/A" text
+     ============================================================ -->
+
+<!-- ── Page header ── -->
+<h1>{{COMPANY_NAME}}</h1>
+<p class="subtitle">Financial Analysis — {{PERIOD}} &nbsp;|&nbsp; {{CURRENCY_NOTE}}</p>
+
+<!-- ── Company overview box ── -->
+<div class="company-meta">
+  <p><strong>Entity:</strong> {{ENTITY_NAME}}</p>
+  <p><strong>Business:</strong> {{BUSINESS_DESCRIPTION}}</p>
+  <p><strong>Key People:</strong> {{KEY_PEOPLE}}</p>
+  <p><strong>Auditor:</strong> {{AUDITOR}} — {{AUDIT_OPINION}}</p>
+  <p><strong>Stage:</strong> {{COMPANY_STAGE}}</p>
+</div>
+
+<!-- ── Financial data table (example: income statement) ── -->
+<h2>Income Statement</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th class="num">FY25</th>
+      <th class="num">FY24</th>
+      <th class="num">Change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!--
+      For each row:
+      - td.metric for the label
+      - td.num for numeric values
+      - Add .positive / .negative / .caution class to the change column
+      - Wrap important rows in <strong>
+    -->
+    <tr>
+      <td class="metric">Revenue</td>
+      <td class="num">1,00,000</td>
+      <td class="num">90,000</td>
+      <td class="num positive">+11.1%</td>
+    </tr>
+    <tr>
+      <td class="metric"><strong>Net Income</strong></td>
+      <td class="num negative"><strong>(5,000)</strong></td>
+      <td class="num negative"><strong>(8,000)</strong></td>
+      <td class="num positive"><strong>Improved</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ── Key observations (ordered list) ── -->
+<h3>Key Observations</h3>
+<ol class="observations">
+  <li><strong>Headline finding.</strong> Supporting detail and specific numbers.</li>
+</ol>
+
+<!-- ── Red flags ── -->
+<h2>Red Flags</h2>
+
+<div class="flag flag-red">
+  <strong>Flag headline</strong>
+  <p>One to two sentences explaining the finding and its significance, with the specific number.</p>
+</div>
+
+<div class="flag flag-yellow">
+  <strong>Caution headline</strong>
+  <p>Issue that needs monitoring but isn't critical yet.</p>
+</div>
+
+<!-- ── Green flags ── -->
+<h2>What Looks Good</h2>
+
+<div class="flag flag-green">
+  <strong>Positive headline</strong>
+  <p>Specific strength backed by a number.</p>
+</div>
+
+<!-- ── Calculation box ── -->
+<h2>The Math</h2>
+
+<div class="math-box">
+  Revenue:         Rs X crore<br>
+  Total costs:     Rs Y crore<br>
+  Gap:             Rs Z crore/year<br><br>
+  Breakeven requires: → condition 1, or<br>
+  → condition 2
+</div>
+
+<!-- ── Scoring table (example: Piotroski) ── -->
+<h2>Scoring Frameworks</h2>
+<h3>Piotroski F-Score</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Test</th>
+      <th>Condition</th>
+      <th class="num">Result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Return on Assets</td>
+      <td>ROA &gt; 0</td>
+      <td class="num pass">Pass (1)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Operating Cash Flow</td>
+      <td>OCF &gt; 0</td>
+      <td class="num fail">Fail (0)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ── Due diligence checklist ── -->
+<h2>Due Diligence Checklist</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Check</th>
+      <th>Pass if...</th>
+      <th class="num">Result</th>
+      <th>Evidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Operating cash flow positive</td>
+      <td>OCF &gt; 0</td>
+      <td class="num"><span class="pass">Pass</span></td>
+      <td>OCF = Rs 15.3L</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Cash flow backs up earnings</td>
+      <td>OCF &gt; Net Income</td>
+      <td class="num"><span class="fail">Fail</span></td>
+      <td>OCF negative while loss reported</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Data not available</td>
+      <td>—</td>
+      <td class="num"><span class="na">N/A</span></td>
+      <td>Not disclosed</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ── Comparison table (multi-company) ── -->
+<h2>Company Comparison</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th class="num">Company A</th>
+      <th class="num">Company B</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="metric">Revenue Growth</td>
+      <td class="num winner">+15%</td>
+      <td class="num">+8%</td>
+    </tr>
+    <tr>
+      <td class="metric">Operating Margin</td>
+      <td class="num">12%</td>
+      <td class="num winner">18%</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ── Verdict box ── -->
+<h2>Verdict</h2>
+
+<div class="verdict">
+  <p><strong>One-paragraph summary.</strong> The most important takeaway in plain language.</p>
+  <p style="margin-top:12px; margin-bottom:0;"><strong>Key question:</strong> The single most important thing to figure out next.</p>
+</div>
+
+<!-- ── Footer ── -->
+<p class="footer">
+  Generated by Team Financial Analyst &nbsp;·&nbsp; Source: {{SOURCE_DOCUMENTS}}
+</p>
+
+</body>
+</html>

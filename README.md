@@ -2,6 +2,8 @@
 
 An AI-powered financial analysis workflow built on Claude Code. Drop in financial statements, get an executive briefing in 2 minutes, then go as deep as you need — with specialized modules for scoring, industry analysis, Indian market checks, peer comparisons, and investment due diligence.
 
+Every analysis generates a **formatted HTML report** with styled tables, color-coded flags, and properly aligned numbers — easy to read in a browser, share with colleagues, or print.
+
 ## Setup
 
 1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) if you haven't already
@@ -34,15 +36,18 @@ Open Claude Code in this project folder and say something like:
 
 ### 3. Get the executive briefing
 
-The agent reads everything and produces a quick briefing:
+The agent reads everything and produces:
+
+- **In the terminal** — a concise briefing you can absorb in 2 minutes
+- **As an HTML report** — a formatted file in the `output/` folder with styled tables, color-coded numbers, and flag cards
+
+The briefing covers:
 
 - **Company snapshot** — what the business does, how it makes money
 - **Key numbers table** — the metrics that matter most for this specific company
 - **Red flags** — the 3-5 most critical issues, ranked by severity, with numbers
 - **What looks good** — specific strengths backed by data
 - **Questions to dig into** — what the data raises but doesn't answer
-
-Designed to be absorbed in about 2 minutes.
 
 ### 4. Choose what to explore next
 
@@ -59,17 +64,36 @@ After the briefing, the agent suggests follow-on options based on what it found.
 
 You don't have to pick from the suggestions — you can ask about anything specific at any point.
 
-### 5. Keep going
+Every module you run gets added to the same HTML report, so by the end you have one complete document.
 
-Every module can lead to further questions. Ask follow-ups, challenge the output, or request a different module. The conversation is cumulative — the agent remembers what it's already analyzed.
+### 5. Open the report
+
+The HTML report is saved to the `output/` folder. Open it in any browser:
+
+```bash
+# The agent will tell you the exact filename, e.g.:
+open output/kenrise-media-analysis.html        # macOS
+xdg-open output/kenrise-media-analysis.html    # Linux
+```
+
+The report includes:
+- **Right-aligned numbers in monospace font** — columns of figures actually line up
+- **Color-coded changes** — green for positive, red for negative, amber for caution
+- **Flag cards** — red/yellow/green cards for risks and strengths instead of plain bullet points
+- **Pass/fail styling** — for scoring frameworks and due diligence checklists
+- **Comparison highlights** — winner cells highlighted in green for multi-company comparisons
+- **Print-friendly layout** — tables and cards won't break across pages
 
 ## What's in this repo
 
 ```
-├── CLAUDE.md                    # Agent instructions (analysis framework + all modules)
-├── Understanding_finance.pdf    # Reference: Merrill Lynch guide to financial reports
-├── statements/                  # Drop your financial statements here
-└── README.md                    # You're reading this
+├── CLAUDE.md                       # Agent instructions (analysis framework + all modules)
+├── Understanding_finance.pdf       # Reference: Merrill Lynch guide to financial reports
+├── template/
+│   └── report-template.html        # HTML/CSS template for generated reports
+├── statements/                     # Drop your financial statements here
+├── output/                         # Generated HTML reports appear here
+└── README.md                       # You're reading this
 ```
 
 ## What the scoring frameworks measure
@@ -91,3 +115,4 @@ If you're new to these, here's a quick primer:
 - **Challenge the output.** If something doesn't look right, say so. The agent will re-examine and correct itself.
 - **You don't need finance knowledge to start.** The agent explains every framework and metric before using it. The scoring frameworks section above gives you the basics, but the agent will go into more detail when you select them.
 - **Indian companies benefit from the India-specific checks.** Promoter pledge analysis and related party screening catch risks that standard analysis misses.
+- **Share the HTML report, not the terminal output.** The HTML file is self-contained — anyone can open it in a browser without needing Claude Code.
