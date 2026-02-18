@@ -74,7 +74,7 @@ For Indian listed companies, you can automatically fetch quarterly financial sta
 On every new conversation:
 
 1. **Greet the user** with: *"Which company would you like to analyze? You can give me a ticker (e.g. HDFCBANK), a company name, or a screener.in URL."*
-2. **Resolve the company** — accept a ticker (`HDFCBANK`), a full name (`HDFC Bank`), or a screener.in URL. For tickers and names, construct the URL as `https://www.screener.in/company/{TICKER}/consolidated/`.
+2. **Resolve the company** — accept a ticker (`HDFCBANK`), a full name (`HDFC Bank`), or a screener.in URL. For tickers and names, the script tries the consolidated view first and automatically falls back to standalone if consolidated has no quarterly PDFs or fewer than standalone.
 3. **Check existing files** — if `statements/` already has PDFs, ask the user: *"I see existing files in the statements folder. Should I clear them before downloading new ones, or keep them?"* Use the `--clean` flag if they want to clear.
 4. **Run discovery** — execute `python3 scripts/fetch_screener.py {TICKER}` to list available quarters. Show the user what's available.
 5. **Ask for date range** — present these preset options:

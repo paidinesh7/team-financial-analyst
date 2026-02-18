@@ -89,21 +89,60 @@ def resolve_url(input_str):
 
 
 def fetch_page(url):
-    """Fetch the screener.in page HTML."""
+    """Fetch the screener.in page HTML. Returns None on 404."""
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             return resp.read().decode("utf-8", errors="replace")
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            print(f"Error: Page not found — {url}", file=sys.stderr)
-            print("Check that the ticker/URL is correct.", file=sys.stderr)
-        else:
-            print(f"Error: HTTP {e.code} fetching {url}", file=sys.stderr)
+            return None
+        print(f"Error: HTTP {e.code} fetching {url}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.URLError as e:
         print(f"Error: Could not connect to screener.in — {e.reason}", file=sys.stderr)
         sys.exit(1)
+
+
+def fetch_with_fallback(url, ticker):
+    """
+    Fetch the company page, trying consolidated first and falling back to
+    standalone if consolidated has no quarterly PDFs or fewer than standalone.
+
+    Returns (html, final_url, quarters, view_type).
+    """
+    html = fetch_page(url)
+    quarters = extract_quarters(html) if html else []
+
+    is_consolidated = "/consolidated/" in url
+    if is_consolidated:
+        standalone_url = url.replace("/consolidated/", "/")
+
+        if not quarters:
+            # Consolidated empty or 404 — try standalone
+            print(f"No quarterly PDFs on consolidated page. Trying standalone...")
+            html_s = fetch_page(standalone_url)
+            quarters_s = extract_quarters(html_s) if html_s else []
+            if quarters_s:
+                return html_s, standalone_url, quarters_s, "standalone"
+        else:
+            # Consolidated has some PDFs — check if standalone has more
+            html_s = fetch_page(standalone_url)
+            quarters_s = extract_quarters(html_s) if html_s else []
+            if len(quarters_s) > len(quarters):
+                print(
+                    f"Standalone has more quarters ({len(quarters_s)}) "
+                    f"than consolidated ({len(quarters)}). Using standalone."
+                )
+                return html_s, standalone_url, quarters_s, "standalone"
+            return html, url, quarters, "consolidated"
+
+    if not html:
+        print("Error: Could not fetch the company page.", file=sys.stderr)
+        sys.exit(1)
+
+    view_type = "consolidated" if is_consolidated else "standalone"
+    return html, url, quarters, view_type
 
 
 def extract_quarters(html):
@@ -241,10 +280,9 @@ def main():
 
     download_mode = args.all or from_spec or to_spec
 
-    # Fetch and parse
+    # Fetch and parse (tries consolidated, falls back to standalone)
     print(f"Fetching screener.in page for {ticker}...")
-    html = fetch_page(url)
-    quarters = extract_quarters(html)
+    html, url, quarters, view_type = fetch_with_fallback(url, ticker)
 
     if not quarters:
         print("No quarterly PDF links found on the page.", file=sys.stderr)
@@ -256,7 +294,7 @@ def main():
         first = quarters[0]
         last = quarters[-1]
         print(f"\nCompany: {ticker}")
-        print(f"Source: {url}")
+        print(f"Source: {url} ({view_type})")
         print(f"\nAvailable quarters ({len(quarters)}):")
         for i, q in enumerate(quarters, 1):
             month_name = MONTH_NAMES[q["month"]]
