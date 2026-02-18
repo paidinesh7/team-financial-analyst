@@ -61,6 +61,54 @@ Excel files require conversion before analysis. Follow this sequence:
 
 ---
 
+## Number Format: Standardize to Crore Rupees (₹ Cr)
+
+**All monetary figures in the output — both terminal and HTML — must be presented in Crore Rupees (₹ Cr).** This is non-negotiable, regardless of what format the source statements use.
+
+### Why this matters
+
+Indian financial statements come in wildly different formats — some report in thousands, some in lakhs, some in millions, some already in crores. Mixing formats makes comparison impossible and confuses readers. Standardizing to crores gives everyone a consistent unit.
+
+### How to detect the source format
+
+Financial statements almost always disclose their number format. Look for these common patterns:
+
+| What the statement says | What it means | Divide by this to get crores |
+|------------------------|---------------|------------------------------|
+| "in Rs" / "in Rupees" / "in ₹" (no qualifier) | Absolute rupees | 1,00,00,000 (1 crore) |
+| "Rs in thousands" / "₹ '000" / "(in thousands)" | Thousands | 10,000 |
+| "Rs in lakhs" / "₹ in Lacs" / "(in lakhs)" | Lakhs | 100 |
+| "Rs in millions" / "(₹ million)" | Millions | 10 (1 crore = 10 million) |
+| "Rs in crores" / "₹ Cr" / "(in crores)" | Already in crores | 1 (no conversion needed) |
+
+**Where to find the format disclosure:**
+- Top of each financial statement (usually right below the heading)
+- Notes to accounts (Note 1 or "Significant accounting policies")
+- Header/footer of each page
+- Cover page of the annual report
+
+### Conversion rules
+
+1. **Detect the source unit first.** Before any analysis, identify the number format from the statements. State it explicitly in your output: *"Source statements report figures in [unit]. All numbers below are converted to ₹ Crores."*
+
+2. **Convert everything consistently.** Every monetary figure in tables, narrative, flag cards, math boxes, and the HTML report must be in ₹ Cr.
+
+3. **Formatting conventions:**
+   - Use **₹ X.XX Cr** format for all figures (two decimal places)
+   - For figures under ₹ 1 Cr, use lakhs instead: **₹ X.XX L** — don't write ₹ 0.03 Cr when ₹ 3.17 L is clearer
+   - Use Indian comma separators for crore figures: ₹ 1,234.56 Cr (not ₹ 1234.56 Cr)
+   - Negative numbers in parentheses: **(₹ 28.96 Cr)** not -₹ 28.96 Cr
+
+4. **Ratios and percentages are unaffected.** Only convert monetary amounts — ratios, margins, percentages, days, and scores stay as-is.
+
+5. **Per-share figures stay in Rupees.** EPS, book value per share, dividend per share — these are always in ₹ per share, not crores.
+
+6. **If the source format is ambiguous or missing**, flag it prominently: *"The statements do not clearly disclose the number format. Based on the magnitude of figures, I'm assuming [unit]. Please verify this assumption."*
+
+7. **Foreign currency amounts**: If the company reports foreign currency figures (USD, EUR, etc.), convert to INR using the exchange rate disclosed in the notes. If no rate is disclosed, note the original currency and state that conversion was not possible.
+
+---
+
 ## HTML Report Generation
 
 **You must generate an HTML report for every analysis.** This is not optional — it's the primary deliverable for the team.
@@ -798,6 +846,7 @@ Use the framework below (sourced from the Merrill Lynch Guide to Understanding F
 
 ## Formatting rules
 
+- **All monetary figures in ₹ Crores** (or ₹ Lakhs if under ₹ 1 Cr). No exceptions. See the "Number Format" section above.
 - Use tables for financial data and ratio comparisons
 - Use clear section headers
 - Bold key numbers and key findings
