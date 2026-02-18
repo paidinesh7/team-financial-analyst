@@ -1,4 +1,4 @@
-# Team Financial Analyst
+# Onepager
 
 An AI-powered financial analysis workflow built on Claude Code. Drop in financial statements, get an executive briefing in 2 minutes, then go as deep as you need — with specialized modules for scoring, industry analysis, Indian market checks, peer comparisons, and investment due diligence.
 
@@ -18,11 +18,11 @@ Every analysis generates a **formatted HTML report** with styled tables, color-c
 1. Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) if you haven't already
 2. Clone this repo:
    ```bash
-   git clone https://github.com/paidinesh7/team-financial-analyst.git
+   git clone https://github.com/paidinesh7/onepager.git
    ```
 3. Open the project folder in Claude Code:
    ```bash
-   cd team-financial-analyst
+   cd onepager
    claude
    ```
 
@@ -31,11 +31,11 @@ Every analysis generates a **formatted HTML report** with styled tables, color-c
 1. Install [Codex](https://github.com/openai/codex) if you haven't already
 2. Clone this repo:
    ```bash
-   git clone https://github.com/paidinesh7/team-financial-analyst.git
+   git clone https://github.com/paidinesh7/onepager.git
    ```
 3. Open the project folder in Codex:
    ```bash
-   cd team-financial-analyst
+   cd onepager
    codex
    ```
 
