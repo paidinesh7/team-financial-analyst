@@ -54,9 +54,27 @@ In Claude Code, you can switch models with `/model` in the conversation.
 
 ## How to use
 
-### 1. Add your files
+### 1. Start the agent
 
-Drop financial statements into the `statements/` folder. Supported formats:
+Open Claude Code (or Codex) in this project folder. The agent will greet you and ask which company you'd like to analyze.
+
+```
+> Which company would you like to analyze?
+> You can give me a ticker (e.g. HDFCBANK), a company name, or a screener.in URL.
+```
+
+**For Indian listed companies**, just type the ticker or paste a screener.in URL. The agent will automatically:
+- Fetch the company's page on screener.in
+- Show you which quarterly filings are available
+- Ask you to pick a date range (current quarter, last FY, last 2 years, etc.)
+- Download the PDFs directly into `statements/`
+- Proceed with the analysis
+
+No manual downloading needed.
+
+### 2. Or add files manually
+
+If you have your own files (annual reports, CSVs, screenshots), drop them into the `statements/` folder. Supported formats:
 
 | Format | Support |
 |--------|---------|
@@ -67,9 +85,7 @@ Drop financial statements into the `statements/` folder. Supported formats:
 
 For company comparisons, add statements for multiple companies.
 
-### 2. Ask for an analysis
-
-Open Claude Code in this project folder and say something like:
+Then ask for an analysis:
 
 - "Analyze the financials in the statements folder"
 - "What do the numbers look like for this company?"
@@ -126,12 +142,34 @@ The report includes:
 - **Comparison highlights** — winner cells highlighted in green for multi-company comparisons
 - **Print-friendly layout** — tables and cards won't break across pages
 
+## Using the fetch script standalone
+
+The screener.in fetch script can also be run directly from the terminal, outside of the agent:
+
+```bash
+# List available quarters for a company
+python3 scripts/fetch_screener.py HDFCBANK
+
+# Download specific quarters
+python3 scripts/fetch_screener.py HDFCBANK --from "Mar 2024" --to "Dec 2025" --output statements/
+
+# Download all available quarters
+python3 scripts/fetch_screener.py HDFCBANK --all --output statements/
+
+# Clear old PDFs before downloading
+python3 scripts/fetch_screener.py HDFCBANK --from "Mar 2024" --to "Dec 2025" --output statements/ --clean
+```
+
+The script uses only Python stdlib — no pip install needed. It accepts full screener.in URLs, partial URLs, or bare tickers.
+
 ## What's in this repo
 
 ```
 ├── CLAUDE.md                       # Agent instructions for Claude Code
 ├── AGENTS.md                       # Agent instructions for OpenAI Codex
 ├── Understanding_finance.pdf       # Reference: Merrill Lynch guide to financial reports
+├── scripts/
+│   └── fetch_screener.py           # Auto-download quarterly PDFs from screener.in
 ├── template/
 │   └── report-template.html        # HTML/CSS template for generated reports
 ├── statements/                     # Drop your financial statements here
