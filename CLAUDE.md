@@ -61,6 +61,142 @@ Excel files require conversion before analysis. Follow this sequence:
 
 ---
 
+## Step 0: Data Extraction (run before analysis)
+
+Before analyzing any PDF, run the extraction tool to pre-process financial statements into structured data. This avoids re-reading PDFs multiple times and eliminates manual lacs→crores conversion errors.
+
+### Running the extraction tool
+
+```bash
+# Install pdfplumber (one-time)
+pip install -r tools/requirements.txt
+
+# Extract all PDFs in statements/
+python3 tools/extract.py
+
+# Or extract a specific file
+python3 tools/extract.py statements/filename.pdf
+```
+
+### Using extracted data
+
+After extraction, `statements/extracted/{pdf-name}/` will contain:
+
+| File/Folder | What it has | When to use |
+|-------------|-------------|-------------|
+| `metadata.json` | Format detected, pages, tables found, company name, period | Read first — tells you the source unit and conversion factor |
+| `converted/` | CSVs with all numbers in crores | Primary data source — use these for analysis |
+| `raw/` | CSVs with original numbers as-is | Cross-reference if a converted number looks wrong |
+| `text/` | Full text of each page | Context, notes, auditor's report, accounting policies |
+| `summary.txt` | Human-readable overview | Quick check of what was extracted |
+
+**Workflow:** Read `metadata.json` first → scan `converted/` CSVs for numbers → use `text/` pages for context and notes.
+
+### If pdfplumber is not installed
+
+Tell the user:
+> "The extraction tool needs pdfplumber. Install it with `pip install -r tools/requirements.txt`, then run `python3 tools/extract.py`. I'll read the PDFs directly in the meantime, but extraction makes the analysis faster and more accurate."
+
+Then fall back to reading PDFs directly, using the Structured Extraction Checklist below.
+
+### If extraction tool is unavailable
+
+Read PDFs directly and use the Structured Extraction Checklist to capture all numbers in a single systematic pass.
+
+### Structured Extraction Checklist
+
+When reading financial statements (either from extracted CSVs or directly from PDFs), capture ALL of the following in one pass. Do not start analysis until this checklist is complete.
+
+**Document metadata:**
+- [ ] Company name (legal name from the header)
+- [ ] Reporting period (e.g., "Year ended 31st March 2025")
+- [ ] Comparative period (e.g., "Year ended 31st March 2024")
+- [ ] Number format (lacs, thousands, crores, etc.) and conversion divisor
+- [ ] Auditor name and opinion type (unqualified / qualified / adverse / disclaimer)
+- [ ] Any emphasis of matter or going concern language
+
+**Income Statement (both current and prior year):**
+- [ ] Revenue from operations
+- [ ] Other income
+- [ ] Total income
+- [ ] Cost of materials consumed / purchases
+- [ ] Changes in inventories
+- [ ] Employee benefit expense
+- [ ] Depreciation and amortization
+- [ ] Finance costs / interest expense
+- [ ] Other expenses
+- [ ] Total expenses
+- [ ] Profit before exceptional items and tax
+- [ ] Exceptional items (if any)
+- [ ] Profit before tax
+- [ ] Tax expense (current + deferred, broken out)
+- [ ] Profit after tax / net income
+- [ ] Other comprehensive income (if any)
+- [ ] Total comprehensive income
+- [ ] EPS — basic and diluted
+
+**Balance Sheet (both current and prior date):**
+- [ ] **Equity & Liabilities:**
+  - [ ] Share capital (authorized, issued, paid-up)
+  - [ ] Other equity / reserves and surplus
+  - [ ] Total equity
+  - [ ] Long-term borrowings
+  - [ ] Short-term borrowings
+  - [ ] Trade payables
+  - [ ] Other current liabilities
+  - [ ] Current provisions
+  - [ ] Non-current provisions
+  - [ ] Deferred tax liabilities (net)
+  - [ ] Total liabilities
+  - [ ] **Total equity + liabilities**
+- [ ] **Assets:**
+  - [ ] Property, plant and equipment (gross + accumulated dep + net)
+  - [ ] Intangible assets
+  - [ ] Goodwill (if any)
+  - [ ] Non-current investments
+  - [ ] Other non-current assets
+  - [ ] Inventories
+  - [ ] Trade receivables
+  - [ ] Cash and cash equivalents
+  - [ ] Bank balances other than cash
+  - [ ] Other current assets
+  - [ ] Current investments
+  - [ ] **Total assets**
+
+**Cash Flow Statement (both years):**
+- [ ] Net cash from operating activities
+- [ ] Net cash from investing activities
+- [ ] Net cash from financing activities
+- [ ] Net increase/(decrease) in cash
+- [ ] Opening cash balance
+- [ ] Closing cash balance
+
+**Statement of Changes in Equity:**
+- [ ] Opening equity balance
+- [ ] Profit for the year added
+- [ ] Dividends paid
+- [ ] New shares issued (if any)
+- [ ] Other comprehensive income items
+- [ ] Closing equity balance
+
+**Key notes to capture:**
+- [ ] Borrowings breakdown (secured vs unsecured, lender names, rates, maturity)
+- [ ] Related party transactions (names, nature, amounts)
+- [ ] Contingent liabilities
+- [ ] Shareholding pattern (promoter %, public %, pledged shares)
+- [ ] COGS / cost of materials breakdown
+- [ ] Segment information (if any)
+- [ ] Subsequent events
+- [ ] Accounting policy changes
+
+**Cross-checks (verify these add up):**
+- [ ] Total assets = Total equity + Total liabilities
+- [ ] Closing cash (cash flow statement) = Cash on balance sheet
+- [ ] Retained earnings movement = Opening + Net income - Dividends
+- [ ] Revenue in income statement matches revenue note
+
+---
+
 ## Number Format: Standardize to Crore Rupees (₹ Cr)
 
 **All monetary figures in the output — both terminal and HTML — must be presented in Crore Rupees (₹ Cr).** This is non-negotiable, regardless of what format the source statements use.
@@ -166,8 +302,9 @@ After generating or updating the HTML, always tell the user: *"Full report saved
 This is the default output. Keep it sharp — one screen of content that a busy team member can absorb in 2 minutes. No filler.
 
 ### Step 1.1: Read all files first
-- Read everything in the `statements/` folder (PDFs, spreadsheets, CSVs, images, annual reports)
-- Don't output anything until you've gone through all available material
+- **If `statements/extracted/` exists**, read extracted data first: `metadata.json` → `converted/` CSVs → `text/` pages for context. This is faster and more accurate than re-reading PDFs.
+- **If no extracted data**, read PDFs directly using the Structured Extraction Checklist (see Step 0 above) to capture all numbers in one systematic pass.
+- Either way, don't output anything until you've gone through all available material.
 
 ### Step 1.2: Company snapshot (2-3 sentences max)
 - What does this company do? How does it make money?

@@ -67,6 +67,29 @@ Drop financial statements into the `statements/` folder. Supported formats:
 
 For company comparisons, add statements for multiple companies.
 
+### 1.5. Extract structured data (optional but recommended)
+
+Pre-process PDFs into structured CSVs. This speeds up analysis and eliminates manual lacs→crores conversion errors.
+
+```bash
+# Install the extraction dependency (one-time)
+pip install -r tools/requirements.txt
+
+# Extract all PDFs in statements/
+python3 tools/extract.py
+
+# Or extract a specific file
+python3 tools/extract.py statements/filename.pdf
+```
+
+This creates `statements/extracted/{pdf-name}/` with:
+- **`metadata.json`** — detected format, pages, tables found
+- **`converted/`** — CSVs with all numbers converted to crores
+- **`raw/`** — CSVs with original numbers as-is
+- **`text/`** — full text per page (for notes, auditor's report, etc.)
+
+The agent automatically uses extracted data when available. If you skip this step, the agent reads PDFs directly — it just takes longer.
+
 ### 2. Ask for an analysis
 
 Open Claude Code in this project folder and say something like:
@@ -132,9 +155,13 @@ The report includes:
 ├── CLAUDE.md                       # Agent instructions for Claude Code
 ├── AGENTS.md                       # Agent instructions for OpenAI Codex
 ├── Understanding_finance.pdf       # Reference: Merrill Lynch guide to financial reports
+├── tools/
+│   ├── extract.py                  # PDF table extraction + lacs→crores conversion
+│   └── requirements.txt            # Python dependencies for extraction
 ├── template/
 │   └── report-template.html        # HTML/CSS template for generated reports
 ├── statements/                     # Drop your financial statements here
+│   └── extracted/                  # Auto-generated structured data (gitignored)
 ├── output/                         # Generated HTML reports appear here
 └── README.md                       # You're reading this
 ```
