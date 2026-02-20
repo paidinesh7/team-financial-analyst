@@ -1,5 +1,7 @@
 # Onepager
 
+> **Privacy by design.** This agent is explicitly configured to keep all financial data strictly local. It will not make network requests, call external APIs, search the web, or transmit any data outside your machine during analysis. Financial statements, extracted data, and generated reports never leave your local environment. See the full privacy rules in `CLAUDE.md`.
+
 An AI-powered financial analysis workflow built on Claude Code. Drop in financial statements, get an executive briefing in 2 minutes, then go as deep as you need — with specialized modules for scoring, industry analysis, Indian market checks, peer comparisons, and investment due diligence.
 
 Every analysis generates a **formatted HTML report** with styled tables, color-coded flags, and properly aligned numbers — easy to read in a browser, share with colleagues, or print.
