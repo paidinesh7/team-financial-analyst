@@ -1,4 +1,17 @@
+# Financial data — never commit (may contain confidential/private information)
+statements/*
+!statements/.gitkeep
+
+# Generated reports — may contain confidential financial analysis
+output/*
+!output/.gitkeep
+
+# Extracted data from PDFs
 statements/extracted/
+
+# Python
 __pycache__/
 *.pyc
+
+# OS
 .DS_Store
