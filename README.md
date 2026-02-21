@@ -1,6 +1,6 @@
 # Onepager
 
-> **Privacy by design.** This agent is explicitly configured to keep all financial data strictly local. It will not make network requests, call external APIs, search the web, or transmit any data outside your machine during analysis. Financial statements, extracted data, and generated reports never leave your local environment. See the full privacy rules in `CLAUDE.md`.
+> **Data privacy note.** This agent is configured to minimize external data exposure. It will not make web searches, call third-party APIs, or share financial data with external services during analysis. However, the analysis itself is processed via Anthropic's API — file contents read during a session are sent to Anthropic's servers as part of the conversation. If your data requires fully local processing, consider using a locally-hosted LLM instead. See the full privacy rules in `CLAUDE.md`.
 
 An AI-powered financial analysis workflow built on Claude Code. Drop in financial statements, get an executive briefing in 2 minutes, then go as deep as you need — with specialized modules for scoring, industry analysis, Indian market checks, peer comparisons, and investment due diligence.
 

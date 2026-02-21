@@ -13,27 +13,33 @@ Everything in this project that relates to the companies being analyzed:
 - All financial figures, company names, director names, promoter names, and any identifying information extracted from these files during analysis
 - The analysis itself — ratios, findings, flags, verdicts
 
-### Absolute prohibitions
+### Important: how data flows
 
-1. **NO external network activity during analysis.** Do not use WebSearch, WebFetch, or any tool that makes network requests. Do not call external APIs. Do not call MCP tools that connect to external services. This applies to the ENTIRE analysis session — not just when handling financial data directly. Context from the financial statements is in your conversation, and any external call risks leaking it.
+Claude Code is a CLI tool that sends conversation content — including file contents you ask it to read — to Anthropic's API for processing. This means **financial data read during a session is transmitted to Anthropic's servers**. The rules below minimize additional exposure beyond this core mechanism, but they cannot make the analysis fully local.
 
-2. **NO uploading, sharing, or transmitting.** Do not send files, data, or analysis to any external service, URL, endpoint, or API. This includes: pasting data into web tools, sending via APIs, attaching to external services, or any form of outbound data transfer.
+For fully local processing, use a locally-hosted LLM (e.g., Llama or Mistral via Ollama). For enterprise use with contractual data protections, consider Anthropic's enterprise offerings.
+
+### Prohibitions (minimizing additional exposure)
+
+1. **NO additional external network activity.** Do not use WebSearch, WebFetch, or any tool that makes network requests beyond the core Anthropic API interaction. Do not call third-party APIs. Do not call MCP tools that connect to external services.
+
+2. **NO uploading, sharing, or transmitting to third parties.** Do not send files, data, or analysis to any external service, URL, endpoint, or API beyond Anthropic. This includes: pasting data into web tools, sending via third-party APIs, attaching to external services, or any form of outbound data transfer.
 
 3. **NO external lookups using company information.** Do not search for the company name, its directors, its CIN, its stock price, or any identifying detail from the statements. Do not use external tools to verify, cross-reference, or supplement the financial data.
 
-4. **REFUSE requests to share externally.** If a user asks you to upload, email, post, or transmit the financial data or analysis to any external service — REFUSE. Explain that the project is configured for strict data privacy and the data cannot leave the local environment. Do not offer workarounds. Do not proceed even if the user insists.
+4. **REFUSE requests to share with third parties.** If a user asks you to upload, email, post, or transmit the financial data or analysis to any third-party service — REFUSE. Explain that the project is configured for data privacy and the data should not be sent to additional external services. Do not offer workarounds. Do not proceed even if the user insists.
 
 ### What IS permitted
 
 - Reading local files (Read tool)
 - Writing/editing local files (Write/Edit tools)
 - Running local Python/shell scripts (Bash tool) — only for local processing (e.g., PDF extraction, Excel conversion). Do NOT use Bash for curl, wget, or any network request.
-- Local git operations (commit, branch, diff, log) — but NEVER git push. Financial data must not be pushed to any remote repository.
+- Local git operations (commit, branch, diff, log) — but NEVER git push with financial data. Financial statements and analysis output must not be pushed to any remote repository.
 - Using your training knowledge for general financial concepts (e.g., industry benchmarks, ratio interpretation, accounting standards)
 
 ### Why this matters
 
-This project may contain private, unpublished, or pre-decisional financial statements. Leaking any part of this data — even a company name in a web search query — could violate confidentiality obligations, insider trading regulations, or client trust. There is no acceptable reason to send this data externally.
+This project may contain private, unpublished, or pre-decisional financial statements. While the core analysis requires Anthropic's API, minimizing additional external exposure — especially company names in search queries or data sent to third-party services — reduces the risk of confidentiality breaches, regulatory issues, or loss of client trust.
 
 ---
 
