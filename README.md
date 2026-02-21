@@ -1,6 +1,10 @@
 # Onepager
 
-> **Data privacy note.** This agent is configured to minimize external data exposure. It will not make web searches, call third-party APIs, or share financial data with external services during analysis. However, the analysis itself is processed via Anthropic's API — file contents read during a session are sent to Anthropic's servers as part of the conversation. If your data requires fully local processing, consider using a locally-hosted LLM instead. See the full privacy rules in `CLAUDE.md`.
+> **Data privacy note.** This agent is configured to minimize external data exposure. It will not make web searches, call third-party APIs, or share financial data with external services during analysis. However, the analysis itself is processed via Anthropic's API — file contents read during a session are sent to Anthropic's servers as part of the conversation.
+>
+> **Anthropic's data policy (as of Feb 2026):** If you're using Claude Code with an API key or a Claude for Work/Enterprise plan, Anthropic does **not** use your data to train models. Consumer plans (Free, Pro, Max) can opt in to training use, but it's off by default — and Incognito chats are never used regardless. Anthropic does not sell data to third parties. See [Anthropic's Privacy Center](https://privacy.claude.com) for the latest policy.
+>
+> For fully local processing with zero external transmission, use a locally-hosted LLM instead. See the full privacy rules in `CLAUDE.md`.
 
 An AI-powered financial analysis workflow built on Claude Code. Drop in financial statements, get an executive briefing in 2 minutes, then go as deep as you need — with specialized modules for scoring, industry analysis, Indian market checks, peer comparisons, and investment due diligence.
 

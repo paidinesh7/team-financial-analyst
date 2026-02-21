@@ -17,7 +17,14 @@ Everything in this project that relates to the companies being analyzed:
 
 Claude Code is a CLI tool that sends conversation content — including file contents you ask it to read — to Anthropic's API for processing. This means **financial data read during a session is transmitted to Anthropic's servers**. The rules below minimize additional exposure beyond this core mechanism, but they cannot make the analysis fully local.
 
-For fully local processing, use a locally-hosted LLM (e.g., Llama or Mistral via Ollama). For enterprise use with contractual data protections, consider Anthropic's enterprise offerings.
+**Anthropic's data policy (as of Feb 2026):**
+- **API and Claude for Work/Enterprise users:** Anthropic does **not** use your data to train models. Your conversations are processed and then subject to Anthropic's data retention policy, but are not fed into training pipelines.
+- **Consumer plans (Free, Pro, Max):** You can opt in to allowing your chats to improve Claude via the "Model Improvement" toggle in privacy settings. It is off by default. Incognito chats are never used for training regardless of this setting.
+- **Anthropic does not sell data to third parties.** Data allowed for training is de-linked from your user ID and filtered to reduce sensitive data exposure before use.
+- **You can delete conversations**, and deleted chats will not be used for future training.
+- See [Anthropic's Privacy Center](https://privacy.claude.com) for the latest policy.
+
+For fully local processing with zero external transmission, use a locally-hosted LLM (e.g., Llama or Mistral via Ollama). For enterprise use with contractual data protections, consider Anthropic's enterprise offerings.
 
 ### Prohibitions (minimizing additional exposure)
 
